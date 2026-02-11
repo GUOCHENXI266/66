@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日毛选</title>
+    <!-- 引入在线毛笔字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Ma+Shan+Zheng&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "STXingkai", "STKaiti", "KaiTi", "Ma Shan Zheng", "ZCOOL XiaoWei", "FangSong", serif;
+            background: linear-gradient(135deg, #C41E3A 0%, #6B1B4D 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 60px 50px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            position: relative;
+        }
+
+        /* 打卡天数 - 左上角 */
+        .check-in-days {
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            font-size: 18px;
+            color: #888;
+            font-weight: 600;
+            animation: pageFlip 0.6s ease-out;
+        }
+
+        @keyframes pageFlip {
+            0% {
+                opacity: 0.3;
+                transform: translateY(-10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 底部按钮组 */
+        .bottom-buttons {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .emperor-btn {
+            font-size: 16px;
+            color: #888;
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: none;
+            padding: 5px 15px;
+        }
+
+        .emperor-btn:hover {
+            color: #333;
+            transform: scale(1.05);
+        }
+
+        /* 收藏和菜单 - 右下角 */
+        .bottom-actions {
+            position: absolute;
+            bottom: 20px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .favorite-icon {
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: none;
+        }
+
+        .favorite-icon:hover {
+            transform: scale(1.2);
+        }
+
+        .favorite-icon.unfavorited {
+            color: #ddd;
+        }
+
+        .favorite-icon.favorited {
+            color: #DC143C;
+        }
+
+        .menu-icon {
+            font-size: 24px;
+            cursor: pointer;
+            color: #888;
+            transition: all 0.3s;
+            line-height: 1;
+            font-weight: 700;
+        }
+
+        .menu-icon:hover {
+            color: #333;
+            transform: scale(1.1);
+        }
+
+        /* 抽卡区域 */
+        .card-area {
+            position: relative;
+            min-height: 450px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+        }
+
+        /* 卡堆 */
+        .card-stack {
+            position: absolute;
+            width: 300px;
+            height: 450px;
+        }
+
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #8B0000 0%, #DAA520 100%);
+            border-radius: 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 52px;
+            color: #FFD700;
+            font-weight: 900;
+            border: 3px solid #FFD700;
+        }
+
+        /* 飞出的卡片 */
+        .card-flying {
+            position: absolute;
+            width: 300px;
+            height: 450px;
+            background: linear-gradient(135deg, #FFFAF0 0%, #FFF8DC 100%);
+            border-radius: 0;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+            border: 3px solid #DAA520;
+            animation: cardFly 1.5s ease-out forwards;
+            opacity: 0;
+            z-index: 10;
+        }
+
+        @keyframes cardFly {
+            0% {
+                transform: translateY(0) scale(0.8) rotateY(0deg);
+                opacity: 0;
+            }
+            30% {
+                transform: translateY(-100px) scale(1.1) rotateY(180deg);
+                opacity: 1;
+            }
+            60% {
+                transform: translateY(-80px) scale(1.05) rotateY(360deg);
+            }
+            100% {
+                transform: translateY(0) scale(1) rotateY(360deg);
+                opacity: 1;
+            }
+        }
+
+        /* 光芒效果 */
+        .glow-effect {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.8) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: glowPulse 1.5s ease-out;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        @keyframes glowPulse {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+
+        /* 语录内容 */
+        .quote-content {
+            display: none;
+            animation: fadeIn 1s ease-in;
+        }
+
+        .quote-content.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .title {
+            font-size: 48px;
+            color: #C41E3A;
+            margin-bottom: 25px;
+            font-weight: 900;
+            letter-spacing: 8px;
+        }
+
+        .date {
+            color: #888;
+            font-size: 18px;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        .quote {
+            font-size: 32px;
+            line-height: 2.2;
+            color: #1a1a1a;
+            margin: 40px 0;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-align: justify;
+            text-justify: inter-ideograph;
+            text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.15);
+        }
+
+        .source {
+            color: #888;
+            font-size: 20px;
+            margin: 30px 0;
+            font-weight: 600;
+            letter-spacing: 3px;
+        }
+
+        .slogan {
+            color: #888;
+            font-size: 18px;
+            margin-top: 20px;
+            font-weight: 400;
+            letter-spacing: 2px;
+        }
+
+        /* 今日运势 */
+        .fortune-section {
+            margin-top: 40px;
+            padding: 25px 30px;
+            background: linear-gradient(135deg, #FFF8DC 0%, #FFFAF0 100%);
+            border-radius: 0;
+            border: 2px solid #DAA520;
+        }
+
+        .fortune-title {
+            font-size: 22px;
+            color: #8B0000;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .fortune-text {
+            font-size: 18px;
+            color: #333;
+            line-height: 1.8;
+            font-weight: 600;
+        }
+
+        /* 收藏列表弹窗 */
+        .favorites-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .favorites-modal.show {
+            display: flex;
+        }
+
+        .favorites-content {
+            background: white;
+            border-radius: 0;
+            padding: 40px;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .favorites-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #DAA520;
+            padding-bottom: 15px;
+        }
+
+        .favorites-title {
+            font-size: 28px;
+            color: #8B0000;
+            font-weight: 700;
+        }
+
+        .close-modal {
+            background: #DC143C;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 0;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .favorite-item {
+            background: #FFF8DC;
+            border: 2px solid #DAA520;
+            border-radius: 0;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .favorite-quote-text {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+
+        .remove-favorite {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #DC143C;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 0;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .empty-favorites {
+            text-align: center;
+            color: #888;
+            font-size: 18px;
+            padding: 40px;
+        }
+
+        /* 关闭按钮 */
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: transparent;
+            color: #888;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            color: #333;
+            transform: scale(1.1);
+        }
+
+        /* 调试按钮 */
+        .debug-btn {
+            position: absolute;
+            top: 20px;
+            right: 70px;
+            background: #888;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="close-btn" onclick="window.close()" title="关闭">×</button>
+        <button class="debug-btn" onclick="resetData()" title="重置数据">重置</button>
+        <div class="check-in-days" id="checkInDays">打卡 1 天</div>
+
+        <!-- 底部按钮组 -->
+        <div class="bottom-buttons">
+            <span class="emperor-btn" onclick="redrawCard()">朕不满意</span>
+            <span class="emperor-btn" onclick="closeWindow()">朕已阅</span>
+        </div>
+
+        <!-- 抽卡区域 -->
+        <div class="card-area" id="cardArea">
+            <div class="card-stack" id="cardStack">
+                <div class="card-back">每日毛选</div>
+            </div>
+        </div>
+
+        <!-- 语录内容 -->
+        <div class="quote-content" id="quoteContent">
+            <div class="title">每日毛选</div>
+            <div class="date" id="date"></div>
+            <div class="quote" id="quote"></div>
+            <div class="source">—《毛泽东选集》—</div>
+            <div class="slogan">每天一句，激励前行</div>
+
+            <!-- 今日运势 -->
+            <div class="fortune-section">
+                <div class="fortune-title">📋 今日运势</div>
+                <div class="fortune-text" id="fortuneText"></div>
+            </div>
+        </div>
+
+        <!-- 右下角操作 -->
+        <div class="bottom-actions">
+            <span class="favorite-icon unfavorited" id="favoriteIcon" onclick="toggleFavorite()" title="收藏">☆</span>
+            <span class="menu-icon" onclick="viewFavorites()" title="查看收藏">≡</span>
+        </div>
+    </div>
+
+    <!-- 收藏列表弹窗 -->
+    <div class="favorites-modal" id="favoritesModal">
+        <div class="favorites-content">
+            <div class="favorites-header">
+                <div class="favorites-title">我的收藏</div>
+                <button class="close-modal" onclick="closeFavorites()">关闭</button>
+            </div>
+            <div id="favoritesList"></div>
+        </div>
+    </div>
+
+    <script>
+        console.log('脚本开始加载...');
+
+        // 毛泽东选集经典语录库（缩短为测试）
+        const quotes = [
+            "我们的同志在困难的时候，要看到成绩，要看到光明，要提高我们的勇气。",
+            "人民，只有人民，才是创造世界历史的动力。世界是人民的，做工的人最有用。",
+            "星星之火，可以燎原。革命的力量虽然开始时很小，但是它的发展会非常迅速。",
+            "没有调查，就没有发言权。不做正确的调查，同样没有发言权。",
+            "虚心使人进步，骄傲使人落后。我们应当永远记住这个真理。",
+            "世界上怕就怕'认真'二字，共产党就最讲认真。",
+            "下定决心，不怕牺牲，排除万难，去争取胜利。这是我们的口号。",
+            "实事求是，是马克思主义的根本观点，是中国共产党人认识世界、改造世界的根本要求。",
+            "一万年太久，只争朝夕。我们要抓紧时间，努力工作。",
+            "好好学习，天天向上。我们要不断学习新知识，提高自己的本领。"
+        ];
+
+        // 运势文案库
+        const fortuneTexts = [
+            "今日适合深入调研、理性分析。遇事多观察、多思考，实事求是方能找到正确方向。",
+            "今日适合攻坚克难、迎接挑战。困难只是暂时的，坚持不懈必有收获。",
+            "今日宜低调谦逊，戒骄戒躁。虚心请教他人，会有意外的收获和帮助。",
+            "今日人际运佳，适合团队协作。多倾听他人意见，群策群力事半功倍。",
+            "今日学习运旺，适合钻研新知。理论结合实践，会有新的突破和领悟。"
+        ];
+
+        let currentQuoteIndex = 0;
+
+        // 关闭窗口
+        function closeWindow() {
+            window.close();
+        }
+
+        // 重置数据
+        function resetData() {
+            localStorage.removeItem('dailyMaoism');
+            alert('数据已重置，页面即将刷新');
+            location.reload();
+        }
+
+        // 获取今天的日期字符串
+        function getTodayStr() {
+            const now = new Date();
+            return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+        }
+
+        // 显示日期
+        function showDate() {
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日 星期${['日','一','二','三','四','五','六'][now.getDay()]}`;
+            document.getElementById('date').textContent = dateStr;
+        }
+
+        // 初始化
+        function init() {
+            console.log('初始化开始...');
+
+            showDate();
+
+            // 读取localStorage
+            let data = localStorage.getItem('dailyMaoism');
+            console.log('localStorage数据:', data);
+
+            if (!data) {
+                data = {
+                    lastDate: '',
+                    totalDays: 0,
+                    favorites: []
+                };
+            } else {
+                data = JSON.parse(data);
+            }
+
+            const today = getTodayStr();
+            console.log('今天日期:', today);
+
+            // 新的一天
+            if (data.lastDate !== today) {
+                console.log('新的一天');
+                data.lastDate = today;
+                data.totalDays++;
+                localStorage.setItem('dailyMaoism', JSON.stringify(data));
+            }
+
+            // 更新打卡天数
+            document.getElementById('checkInDays').textContent = `打卡 ${data.totalDays} 天`;
+
+            console.log('初始化完成，准备抽卡');
+
+            // 自动抽第一张卡
+            setTimeout(() => {
+                console.log('执行自动抽卡');
+                playCardAnimation();
+            }, 500);
+        }
+
+        // 抽卡
+        function drawQuote() {
+            // 随机抽取（无限制）
+            currentQuoteIndex = Math.floor(Math.random() * quotes.length);
+            console.log('抽到语录索引:', currentQuoteIndex);
+            return true;
+        }
+
+        // 再抽一次
+        function redrawCard() {
+            console.log('点击再抽一次');
+
+            drawQuote();
+
+            // 隐藏当前内容
+            document.getElementById('quoteContent').classList.remove('show');
+            document.getElementById('cardArea').style.display = 'flex';
+
+            setTimeout(() => {
+                playCardAnimation();
+            }, 300);
+        }
+
+        // 播放抽卡动画
+        function playCardAnimation() {
+            console.log('播放抽卡动画');
+
+            drawQuote();
+
+            const cardArea = document.getElementById('cardArea');
+
+            const glow = document.createElement('div');
+            glow.className = 'glow-effect';
+            cardArea.appendChild(glow);
+
+            const flyingCard = document.createElement('div');
+            flyingCard.className = 'card-flying';
+            cardArea.appendChild(flyingCard);
+
+            setTimeout(() => {
+                cardArea.style.display = 'none';
+                showQuoteContent();
+            }, 1500);
+        }
+
+        // 显示语录内容
+        function showQuoteContent() {
+            console.log('显示语录内容');
+
+            const quote = quotes[currentQuoteIndex];
+            document.getElementById('quote').textContent = quote;
+
+            // 生成运势
+            const fortune = fortuneTexts[currentQuoteIndex % fortuneTexts.length];
+            document.getElementById('fortuneText').textContent = fortune;
+
+            updateFavoriteIcon();
+
+            document.getElementById('quoteContent').classList.add('show');
+        }
+
+        // 切换收藏
+        function toggleFavorite() {
+            let data = JSON.parse(localStorage.getItem('dailyMaoism'));
+            const index = data.favorites.indexOf(currentQuoteIndex);
+
+            if (index > -1) {
+                data.favorites.splice(index, 1);
+            } else {
+                data.favorites.push(currentQuoteIndex);
+            }
+
+            localStorage.setItem('dailyMaoism', JSON.stringify(data));
+            updateFavoriteIcon();
+        }
+
+        // 更新收藏图标
+        function updateFavoriteIcon() {
+            const icon = document.getElementById('favoriteIcon');
+            const data = JSON.parse(localStorage.getItem('dailyMaoism'));
+            const isFavorited = data.favorites.includes(currentQuoteIndex);
+
+            if (isFavorited) {
+                icon.textContent = '★';
+                icon.className = 'favorite-icon favorited';
+            } else {
+                icon.textContent = '☆';
+                icon.className = 'favorite-icon unfavorited';
+            }
+        }
+
+        // 查看收藏
+        function viewFavorites() {
+            const modal = document.getElementById('favoritesModal');
+            const listEl = document.getElementById('favoritesList');
+            const data = JSON.parse(localStorage.getItem('dailyMaoism'));
+            const favorites = data.favorites;
+
+            if (favorites.length === 0) {
+                listEl.innerHTML = '<div class="empty-favorites">暂无收藏，快去收藏喜欢的语录吧！</div>';
+            } else {
+                listEl.innerHTML = favorites.map(index => `
+                    <div class="favorite-item">
+                        <div class="favorite-quote-text">${quotes[index]}</div>
+                        <button class="remove-favorite" onclick="removeFavorite(${index})">取消收藏</button>
+                    </div>
+                `).join('');
+            }
+
+            modal.classList.add('show');
+        }
+
+        // 关闭收藏列表
+        function closeFavorites() {
+            document.getElementById('favoritesModal').classList.remove('show');
+        }
+
+        // 移除收藏
+        function removeFavorite(index) {
+            let data = JSON.parse(localStorage.getItem('dailyMaoism'));
+            const favIndex = data.favorites.indexOf(index);
+            if (favIndex > -1) {
+                data.favorites.splice(favIndex, 1);
+            }
+            localStorage.setItem('dailyMaoism', JSON.stringify(data));
+
+            viewFavorites();
+
+            if (index === currentQuoteIndex) {
+                updateFavoriteIcon();
+            }
+        }
+
+        console.log('准备执行window.onload');
+        window.onload = function() {
+            console.log('window.onload执行');
+            init();
+        };
+
+        console.log('脚本加载完成');
+    </script>
+</body>
+</html>
