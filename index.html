@@ -35,7 +35,7 @@
             position: relative;
         }
 
-        /* 打卡天数 - 左上角 */
+        /* 打卡天数 - 左上角 - 可点击 */
         .check-in-days {
             position: absolute;
             top: 20px;
@@ -44,6 +44,16 @@
             color: #888;
             font-weight: 600;
             animation: pageFlip 0.6s ease-out;
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 8px 15px;
+            border-radius: 10px;
+        }
+
+        .check-in-days:hover {
+            background: #f0f0f0;
+            color: #C41E3A;
+            transform: scale(1.05);
         }
 
         @keyframes pageFlip {
@@ -55,6 +65,187 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+
+        /* 日历弹窗 */
+        .calendar-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .calendar-modal.show {
+            display: flex;
+        }
+
+        .calendar-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #DAA520;
+            padding-bottom: 15px;
+        }
+
+        .calendar-title {
+            font-size: 28px;
+            color: #8B0000;
+            font-weight: 700;
+        }
+
+        /* 徽章展示区 */
+        .badges-section {
+            background: linear-gradient(135deg, #FFF8DC 0%, #FFFAF0 100%);
+            border: 2px solid #DAA520;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .badges-title {
+            font-size: 20px;
+            color: #8B0000;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .badges-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .badge-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .badge-icon {
+            font-size: 50px;
+            filter: grayscale(100%) opacity(0.3);
+            transition: all 0.3s;
+        }
+
+        .badge-icon.earned {
+            filter: grayscale(0%) opacity(1);
+            animation: badgeEarn 0.6s ease-out;
+        }
+
+        @keyframes badgeEarn {
+            0% { transform: scale(0) rotate(-180deg); }
+            50% { transform: scale(1.2) rotate(10deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .badge-label {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .badge-label.earned {
+            color: #8B0000;
+            font-weight: 700;
+        }
+
+        /* 日历格子 */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .calendar-weekday {
+            font-size: 14px;
+            font-weight: 700;
+            color: #888;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            background: white;
+            position: relative;
+        }
+
+        .calendar-day.weekend {
+            background: #f8f8f8;
+            color: #ccc;
+        }
+
+        .calendar-day.checked {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            border-color: #DAA520;
+            color: white;
+            font-weight: 700;
+        }
+
+        .calendar-day.today {
+            border-color: #DC143C;
+            border-width: 3px;
+        }
+
+        .check-mark {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 18px;
+        }
+
+        /* 统计信息 */
+        .stats-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            color: #8B0000;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #888;
         }
 
         /* 底部按钮组 */
@@ -413,7 +604,7 @@
 <body>
     <div class="container">
         <button class="close-btn" onclick="window.close()" title="关闭">×</button>
-        <div class="check-in-days" id="checkInDays">打卡 1 天</div>
+        <div class="check-in-days" id="checkInDays" onclick="showCalendar()" title="查看打卡日历">打卡 1 天</div>
 
         <!-- 底部按钮组 -->
         <div class="bottom-buttons">
@@ -447,6 +638,43 @@
         <div class="bottom-actions">
             <span class="favorite-icon unfavorited" id="favoriteIcon" onclick="toggleFavorite()" title="收藏">☆</span>
             <span class="menu-icon" onclick="viewFavorites()" title="查看收藏">≡</span>
+        </div>
+    </div>
+
+    <!-- 日历弹窗 -->
+    <div class="calendar-modal" id="calendarModal">
+        <div class="calendar-content">
+            <div class="calendar-header">
+                <div class="calendar-title" id="calendarHeaderTitle">📅 打卡日历</div>
+                <button class="close-modal" onclick="closeCalendar()">关闭</button>
+            </div>
+
+            <!-- 徽章展示 -->
+            <div class="badges-section">
+                <div class="badges-title">🏆 我的徽章</div>
+                <div class="badges-container" id="badgesContainer"></div>
+            </div>
+
+            <!-- 统计信息 -->
+            <div class="stats-section">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalWorkdays">0</div>
+                    <div class="stat-label">总工作日打卡</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="currentStreak">0</div>
+                    <div class="stat-label">连续打卡</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="badgeCount">0</div>
+                    <div class="stat-label">获得徽章</div>
+                </div>
+            </div>
+
+            <div style="height: 20px;"></div>
+
+            <!-- 日历格子 -->
+            <div class="calendar-grid" id="calendarGrid"></div>
         </div>
     </div>
 
@@ -493,7 +721,7 @@
             return userId;
         }
 
-        // 毛泽东选集经典语录库（缩短为测试）
+        // 毛泽东选集经典语录库
         const quotes = [
             "我们的同志在困难的时候，要看到成绩，要看到光明，要提高我们的勇气。",
             "人民，只有人民，才是创造世界历史的动力。世界是人民的，做工的人最有用。",
@@ -516,7 +744,28 @@
             "今日学习运旺，适合钻研新知。理论结合实践，会有新的突破和领悟。"
         ];
 
+        // 徽章配置
+        const badges = [
+            { id: 1, icon: '🌟', name: '初心不忘', workdays: 7 },
+            { id: 2, icon: '⭐', name: '坚持不懈', workdays: 14 },
+            { id: 3, icon: '💫', name: '持之以恒', workdays: 21 },
+            { id: 4, icon: '✨', name: '勤学苦练', workdays: 28 },
+            { id: 5, icon: '🏆', name: '百炼成钢', workdays: 35 },
+            { id: 6, icon: '👑', name: '学习标兵', workdays: 50 }
+        ];
+
         let currentQuoteIndex = 0;
+
+        // 判断是否为工作日（周一到周五）
+        function isWorkday(date) {
+            const day = date.getDay();
+            return day >= 1 && day <= 5;
+        }
+
+        // 获取日期字符串
+        function getDateStr(date) {
+            return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+        }
 
         // 关闭窗口
         function closeWindow() {
@@ -536,6 +785,136 @@
             document.getElementById('date').textContent = dateStr;
         }
 
+        // 显示日历
+        function showCalendar() {
+            const userId = getUserId();
+            document.getElementById('calendarHeaderTitle').textContent = `📅 打卡日历（尾号${userId}）`;
+            renderCalendar();
+            document.getElementById('calendarModal').classList.add('show');
+        }
+
+        // 关闭日历
+        function closeCalendar() {
+            document.getElementById('calendarModal').classList.remove('show');
+        }
+
+        // 渲染日历
+        function renderCalendar() {
+            const userId = getUserId();
+            const storageKey = `dailyMaoism_${userId}`;
+            const data = JSON.parse(localStorage.getItem(storageKey)) || { checkInDates: [], favorites: [] };
+            const grid = document.getElementById('calendarGrid');
+            const today = new Date();
+
+            // 获取最近30天
+            const days = [];
+            for (let i = 29; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                days.push(date);
+            }
+
+            // 找到第一天是周几
+            const firstDay = days[0].getDay();
+            const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+
+            // 渲染星期标题
+            grid.innerHTML = weekdays.map(day =>
+                `<div class="calendar-weekday">${day}</div>`
+            ).join('');
+
+            // 添加空白占位
+            for (let i = 0; i < firstDay; i++) {
+                grid.innerHTML += '<div></div>';
+            }
+
+            // 渲染日期
+            const todayStr = getDateStr(today);
+            days.forEach(date => {
+                const dateStr = getDateStr(date);
+                const isToday = dateStr === todayStr;
+                const isWeekend = !isWorkday(date);
+                const isChecked = data.checkInDates && data.checkInDates.includes(dateStr);
+
+                const classes = ['calendar-day'];
+                if (isWeekend) classes.push('weekend');
+                if (isChecked) classes.push('checked');
+                if (isToday) classes.push('today');
+
+                grid.innerHTML += `
+                    <div class="${classes.join(' ')}">
+                        <div>${date.getDate()}</div>
+                        ${isChecked ? '<div class="check-mark">✓</div>' : ''}
+                    </div>
+                `;
+            });
+
+            // 渲染徽章
+            renderBadges(data);
+
+            // 渲染统计
+            renderStats(data);
+        }
+
+        // 渲染徽章
+        function renderBadges(data) {
+            const workdayCount = data.checkInDates ? data.checkInDates.filter(dateStr => {
+                const [year, month, day] = dateStr.split('-');
+                const date = new Date(year, month - 1, day);
+                return isWorkday(date);
+            }).length : 0;
+
+            const container = document.getElementById('badgesContainer');
+            container.innerHTML = badges.map(badge => {
+                const earned = workdayCount >= badge.workdays;
+                return `
+                    <div class="badge-item">
+                        <div class="badge-icon ${earned ? 'earned' : ''}">${badge.icon}</div>
+                        <div class="badge-label ${earned ? 'earned' : ''}">${badge.name}</div>
+                        <div style="font-size: 11px; color: #aaa;">${badge.workdays}天</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 渲染统计
+        function renderStats(data) {
+            const workdayCount = data.checkInDates ? data.checkInDates.filter(dateStr => {
+                const [year, month, day] = dateStr.split('-');
+                const date = new Date(year, month - 1, day);
+                return isWorkday(date);
+            }).length : 0;
+
+            const earnedBadges = badges.filter(badge => workdayCount >= badge.workdays).length;
+
+            // 计算连续打卡天数
+            let streak = 0;
+            if (data.checkInDates && data.checkInDates.length > 0) {
+                const sortedDates = [...data.checkInDates].sort().reverse();
+                const today = new Date();
+                let checkDate = new Date(today);
+
+                for (let i = 0; i < 100; i++) {
+                    if (!isWorkday(checkDate)) {
+                        checkDate.setDate(checkDate.getDate() - 1);
+                        continue;
+                    }
+
+                    const dateStr = getDateStr(checkDate);
+                    if (sortedDates.includes(dateStr)) {
+                        streak++;
+                        checkDate.setDate(checkDate.getDate() - 1);
+                    } else {
+                        break;
+                    }
+                }
+            }
+
+            document.getElementById('totalWorkdays').textContent = workdayCount;
+            document.getElementById('currentStreak').textContent = streak;
+            document.getElementById('badgeCount').textContent = earnedBadges;
+        }
+
         // 初始化
         function init() {
             console.log('初始化开始...');
@@ -546,7 +925,7 @@
 
             showDate();
 
-            // 读取用户专属数据（使用用户ID作为key）
+            // 读取用户专属数据
             const storageKey = `dailyMaoism_${userId}`;
             let data = localStorage.getItem(storageKey);
             console.log('localStorage数据:', data);
@@ -555,26 +934,52 @@
                 data = {
                     userId: userId,
                     lastDate: '',
-                    totalDays: 0,
+                    checkInDates: [],
                     favorites: []
                 };
             } else {
                 data = JSON.parse(data);
+                // 兼容旧版本数据
+                if (!data.checkInDates) {
+                    data.checkInDates = [];
+                }
             }
 
             const today = getTodayStr();
             console.log('今天日期:', today);
 
             // 新的一天
+            const todayDate = new Date();
             if (data.lastDate !== today) {
                 console.log('新的一天');
                 data.lastDate = today;
-                data.totalDays++;
+
+                if (isWorkday(todayDate)) {
+                    // 只统计工作日
+                    if (!data.checkInDates.includes(today)) {
+                        data.checkInDates.push(today);
+                    }
+                }
+
                 localStorage.setItem(storageKey, JSON.stringify(data));
+            } else {
+                // 同一天，但检查是否需要补充今天的打卡记录（兼容旧版本数据）
+                if (isWorkday(todayDate) && !data.checkInDates.includes(today)) {
+                    console.log('补充今天的打卡记录');
+                    data.checkInDates.push(today);
+                    localStorage.setItem(storageKey, JSON.stringify(data));
+                }
             }
 
-            // 更新打卡天数（显示尾号）
-            document.getElementById('checkInDays').textContent = `打卡 ${data.totalDays} 天（尾号${userId}）`;
+            // 计算工作日打卡天数
+            const workdayCount = data.checkInDates.filter(dateStr => {
+                const [year, month, day] = dateStr.split('-');
+                const date = new Date(year, month - 1, day);
+                return isWorkday(date);
+            }).length;
+
+            // 更新打卡天数显示（显示尾号）
+            document.getElementById('checkInDays').textContent = `打卡 ${workdayCount} 天（尾号${userId}）`;
 
             console.log('初始化完成，准备抽卡');
 
@@ -587,7 +992,6 @@
 
         // 抽卡
         function drawQuote() {
-            // 随机抽取（无限制）
             currentQuoteIndex = Math.floor(Math.random() * quotes.length);
             console.log('抽到语录索引:', currentQuoteIndex);
             return true;
@@ -599,7 +1003,6 @@
 
             drawQuote();
 
-            // 隐藏当前内容
             document.getElementById('quoteContent').classList.remove('show');
             document.getElementById('cardArea').style.display = 'flex';
 
@@ -637,7 +1040,6 @@
             const quote = quotes[currentQuoteIndex];
             document.getElementById('quote').textContent = quote;
 
-            // 生成运势
             const fortune = fortuneTexts[currentQuoteIndex % fortuneTexts.length];
             document.getElementById('fortuneText').textContent = fortune;
 
@@ -648,7 +1050,7 @@
 
         // 切换收藏
         function toggleFavorite() {
-            const userId = localStorage.getItem('maoismUserId');
+            const userId = getUserId();
             const storageKey = `dailyMaoism_${userId}`;
             let data = JSON.parse(localStorage.getItem(storageKey));
             const index = data.favorites.indexOf(currentQuoteIndex);
@@ -665,7 +1067,7 @@
 
         // 更新收藏图标
         function updateFavoriteIcon() {
-            const userId = localStorage.getItem('maoismUserId');
+            const userId = getUserId();
             const storageKey = `dailyMaoism_${userId}`;
             const icon = document.getElementById('favoriteIcon');
             const data = JSON.parse(localStorage.getItem(storageKey));
@@ -682,7 +1084,7 @@
 
         // 查看收藏
         function viewFavorites() {
-            const userId = localStorage.getItem('maoismUserId');
+            const userId = getUserId();
             const storageKey = `dailyMaoism_${userId}`;
             const modal = document.getElementById('favoritesModal');
             const listEl = document.getElementById('favoritesList');
@@ -710,7 +1112,7 @@
 
         // 移除收藏
         function removeFavorite(index) {
-            const userId = localStorage.getItem('maoismUserId');
+            const userId = getUserId();
             const storageKey = `dailyMaoism_${userId}`;
             let data = JSON.parse(localStorage.getItem(storageKey));
             const favIndex = data.favorites.indexOf(index);
