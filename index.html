@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>每日毛选</title>
-    <!-- 引入在线毛笔字体 -->
     <link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Ma+Shan+Zheng&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
     <style>
         * {
@@ -35,7 +34,7 @@
             position: relative;
         }
 
-        /* 打卡天数 - 左上角 - 可点击 */
+        /* 打卡天数 - 左上角 */
         .check-in-days {
             position: absolute;
             top: 20px;
@@ -67,8 +66,8 @@
             }
         }
 
-        /* 日历弹窗 */
-        .calendar-modal {
+        /* 通用弹窗样式 */
+        .modal {
             display: none;
             position: fixed;
             top: 0;
@@ -81,11 +80,11 @@
             align-items: center;
         }
 
-        .calendar-modal.show {
+        .modal.show {
             display: flex;
         }
 
-        .calendar-content {
+        .modal-content {
             background: white;
             border-radius: 20px;
             padding: 40px;
@@ -97,7 +96,7 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
 
-        .calendar-header {
+        .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -106,10 +105,41 @@
             padding-bottom: 15px;
         }
 
-        .calendar-title {
+        .modal-title {
             font-size: 28px;
             color: #8B0000;
             font-weight: 700;
+        }
+
+        .edit-profile-btn {
+            background: #DAA520;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            margin-right: 10px;
+        }
+
+        .edit-profile-btn:hover {
+            background: #B8860B;
+        }
+
+        .close-modal {
+            background: #DC143C;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .close-modal:hover {
+            background: #B01030;
         }
 
         /* 徽章展示区 */
@@ -248,6 +278,166 @@
             color: #888;
         }
 
+        /* 相处模式选择器 */
+        .compatibility-selector {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .selector-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .selector-label {
+            font-size: 16px;
+            color: #333;
+            font-weight: 600;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .selector-box {
+            position: relative;
+            flex: 1;
+            max-width: 300px;
+        }
+
+        .selector-box select {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 2px solid #DAA520;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .selector-box select:focus {
+            outline: none;
+            border-color: #8B0000;
+            box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
+        }
+
+        .analyze-btn {
+            background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .analyze-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(139, 0, 0, 0.3);
+        }
+
+        /* 相处建议结果 */
+        .compatibility-result {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .compatibility-result.show {
+            display: block;
+        }
+
+        .result-header {
+            background: linear-gradient(135deg, #FFF8DC 0%, #FFFAF0 100%);
+            border: 2px solid #DAA520;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .personality-combo {
+            font-size: 24px;
+            color: #8B0000;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .compatibility-score {
+            font-size: 48px;
+            color: #DC143C;
+            font-weight: 900;
+            margin: 15px 0;
+        }
+
+        .score-stars {
+            font-size: 32px;
+            color: #FFD700;
+        }
+
+        .result-section {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .result-section-title {
+            font-size: 20px;
+            color: #8B0000;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .result-section-content {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #333;
+            text-align: left;
+        }
+
+        .result-section-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .result-section-content li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .result-section-content li:before {
+            content: "•";
+            position: absolute;
+            left: 8px;
+            color: #DAA520;
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .quote-highlight {
+            background: linear-gradient(135deg, #FFF8DC 0%, #FFFAF0 100%);
+            border-left: 4px solid #DAA520;
+            padding: 15px 20px;
+            margin: 15px 0;
+            font-size: 18px;
+            font-weight: 600;
+            font-style: italic;
+            color: #1a1a1a;
+        }
+
         /* 底部按钮组 */
         .bottom-buttons {
             position: absolute;
@@ -283,14 +473,14 @@
             align-items: center;
         }
 
-        .favorite-icon {
+        .action-icon {
             font-size: 28px;
             cursor: pointer;
             transition: all 0.3s;
             user-select: none;
         }
 
-        .favorite-icon:hover {
+        .action-icon:hover {
             transform: scale(1.2);
         }
 
@@ -313,7 +503,10 @@
 
         .menu-icon:hover {
             color: #333;
-            transform: scale(1.1);
+        }
+
+        .compatibility-icon {
+            color: #DAA520;
         }
 
         /* 抽卡区域 */
@@ -326,7 +519,6 @@
             perspective: 1000px;
         }
 
-        /* 卡堆 */
         .card-stack {
             position: absolute;
             width: 300px;
@@ -349,7 +541,6 @@
             border: 3px solid #FFD700;
         }
 
-        /* 飞出的卡片 */
         .card-flying {
             position: absolute;
             width: 300px;
@@ -381,7 +572,6 @@
             }
         }
 
-        /* 光芒效果 */
         .glow-effect {
             position: absolute;
             width: 300px;
@@ -466,7 +656,6 @@
             letter-spacing: 2px;
         }
 
-        /* 今日运势 */
         .fortune-section {
             margin-top: 40px;
             padding: 25px 30px;
@@ -489,58 +678,8 @@
             font-weight: 600;
         }
 
-        /* 收藏列表弹窗 */
-        .favorites-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .favorites-modal.show {
-            display: flex;
-        }
-
-        .favorites-content {
-            background: white;
+        .favorites-modal .modal-content {
             border-radius: 0;
-            padding: 40px;
-            max-width: 800px;
-            max-height: 80vh;
-            overflow-y: auto;
-            position: relative;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        }
-
-        .favorites-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            border-bottom: 3px solid #DAA520;
-            padding-bottom: 15px;
-        }
-
-        .favorites-title {
-            font-size: 28px;
-            color: #8B0000;
-            font-weight: 700;
-        }
-
-        .close-modal {
-            background: #DC143C;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 0;
-            cursor: pointer;
-            font-size: 14px;
         }
 
         .favorite-item {
@@ -579,7 +718,6 @@
             padding: 40px;
         }
 
-        /* 关闭按钮 */
         .close-btn {
             position: absolute;
             top: 20px;
@@ -606,20 +744,17 @@
         <button class="close-btn" onclick="window.close()" title="关闭">×</button>
         <div class="check-in-days" id="checkInDays" onclick="showCalendar()" title="查看打卡日历">打卡 1 天</div>
 
-        <!-- 底部按钮组 -->
         <div class="bottom-buttons">
             <span class="emperor-btn" onclick="redrawCard()">朕不满意</span>
             <span class="emperor-btn" onclick="closeWindow()">朕已阅</span>
         </div>
 
-        <!-- 抽卡区域 -->
         <div class="card-area" id="cardArea">
-            <div class="card-stack" id="cardStack">
+            <div class="card-stack">
                 <div class="card-back">每日毛选</div>
             </div>
         </div>
 
-        <!-- 语录内容 -->
         <div class="quote-content" id="quoteContent">
             <div class="title">每日毛选</div>
             <div class="date" id="date"></div>
@@ -627,35 +762,35 @@
             <div class="source">—《毛泽东选集》—</div>
             <div class="slogan">每天一句，激励前行</div>
 
-            <!-- 今日运势 -->
             <div class="fortune-section">
                 <div class="fortune-title">📋 今日运势</div>
                 <div class="fortune-text" id="fortuneText"></div>
             </div>
         </div>
 
-        <!-- 右下角操作 -->
         <div class="bottom-actions">
-            <span class="favorite-icon unfavorited" id="favoriteIcon" onclick="toggleFavorite()" title="收藏">☆</span>
-            <span class="menu-icon" onclick="viewFavorites()" title="查看收藏">≡</span>
+            <span class="action-icon favorite-icon unfavorited" id="favoriteIcon" onclick="toggleFavorite()" title="收藏">☆</span>
+            <span class="action-icon compatibility-icon" onclick="showCompatibility()" title="相处模式">🤝</span>
+            <span class="action-icon menu-icon" onclick="viewFavorites()" title="查看收藏">≡</span>
         </div>
     </div>
 
     <!-- 日历弹窗 -->
-    <div class="calendar-modal" id="calendarModal">
-        <div class="calendar-content">
-            <div class="calendar-header">
-                <div class="calendar-title" id="calendarHeaderTitle">📅 打卡日历</div>
-                <button class="close-modal" onclick="closeCalendar()">关闭</button>
+    <div class="modal" id="calendarModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="calendarHeaderTitle">📅 打卡日历</div>
+                <div>
+                    <button class="edit-profile-btn" onclick="editProfile()">✏️ 编辑资料</button>
+                    <button class="close-modal" onclick="closeCalendar()">关闭</button>
+                </div>
             </div>
 
-            <!-- 徽章展示 -->
             <div class="badges-section">
                 <div class="badges-title">🏆 我的徽章</div>
                 <div class="badges-container" id="badgesContainer"></div>
             </div>
 
-            <!-- 统计信息 -->
             <div class="stats-section">
                 <div class="stat-item">
                     <div class="stat-value" id="totalWorkdays">0</div>
@@ -672,17 +807,81 @@
             </div>
 
             <div style="height: 20px;"></div>
-
-            <!-- 日历格子 -->
             <div class="calendar-grid" id="calendarGrid"></div>
         </div>
     </div>
 
+    <!-- 相处模式弹窗 -->
+    <div class="modal" id="compatibilityModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">🤝 相处模式查询器</div>
+                <button class="close-modal" onclick="closeCompatibility()">关闭</button>
+            </div>
+
+            <div class="compatibility-selector">
+                <div class="selector-row">
+                    <div class="selector-label">对方MBTI:</div>
+                    <div class="selector-box">
+                        <select id="partnerMbti">
+                            <option value="">请选择...</option>
+                            <option value="INTJ">INTJ - 建筑师</option>
+                            <option value="INTP">INTP - 逻辑学家</option>
+                            <option value="ENTJ">ENTJ - 指挥官</option>
+                            <option value="ENTP">ENTP - 辩论家</option>
+                            <option value="INFJ">INFJ - 提倡者</option>
+                            <option value="INFP">INFP - 调停者</option>
+                            <option value="ENFJ">ENFJ - 主人公</option>
+                            <option value="ENFP">ENFP - 竞选者</option>
+                            <option value="ISTJ">ISTJ - 物流师</option>
+                            <option value="ISFJ">ISFJ - 守卫者</option>
+                            <option value="ESTJ">ESTJ - 总经理</option>
+                            <option value="ESFJ">ESFJ - 执政官</option>
+                            <option value="ISTP">ISTP - 鉴赏家</option>
+                            <option value="ISFP">ISFP - 探险家</option>
+                            <option value="ESTP">ESTP - 企业家</option>
+                            <option value="ESFP">ESFP - 表演者</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="selector-row">
+                    <div class="selector-label">对方星座:</div>
+                    <div class="selector-box">
+                        <select id="partnerZodiac">
+                            <option value="">请选择...</option>
+                            <option value="白羊座">♈ 白羊座 (3.21-4.19)</option>
+                            <option value="金牛座">♉ 金牛座 (4.20-5.20)</option>
+                            <option value="双子座">♊ 双子座 (5.21-6.21)</option>
+                            <option value="巨蟹座">♋ 巨蟹座 (6.22-7.22)</option>
+                            <option value="狮子座">♌ 狮子座 (7.23-8.22)</option>
+                            <option value="处女座">♍ 处女座 (8.23-9.22)</option>
+                            <option value="天秤座">♎ 天秤座 (9.23-10.23)</option>
+                            <option value="天蝎座">♏ 天蝎座 (10.24-11.22)</option>
+                            <option value="射手座">♐ 射手座 (11.23-12.21)</option>
+                            <option value="摩羯座">♑ 摩羯座 (12.22-1.19)</option>
+                            <option value="水瓶座">♒ 水瓶座 (1.20-2.18)</option>
+                            <option value="双鱼座">♓ 双鱼座 (2.19-3.20)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="text-align: center;">
+                    <button class="analyze-btn" onclick="analyzeCompatibility()">分析相处模式</button>
+                </div>
+            </div>
+
+            <div class="compatibility-result" id="compatibilityResult">
+                <!-- 结果将动态生成 -->
+            </div>
+        </div>
+    </div>
+
     <!-- 收藏列表弹窗 -->
-    <div class="favorites-modal" id="favoritesModal">
-        <div class="favorites-content">
-            <div class="favorites-header">
-                <div class="favorites-title">我的收藏</div>
+    <div class="modal favorites-modal" id="favoritesModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">我的收藏</div>
                 <button class="close-modal" onclick="closeFavorites()">关闭</button>
             </div>
             <div id="favoritesList"></div>
@@ -692,36 +891,72 @@
     <script>
         console.log('脚本开始加载...');
 
-        // 获取或设置用户标识
-        function getUserId() {
-            let userId = localStorage.getItem('maoismUserId');
+        // 获取或设置用户标识和个人信息
+        function getUserInfo() {
+            let userInfo = localStorage.getItem('maoismUserInfo');
 
-            if (!userId) {
-                // 首次访问，弹窗输入手机号后4位
+            if (!userInfo) {
+                // 首次访问，收集用户信息
+                let userId = '';
                 while (!userId || userId.length !== 4 || isNaN(userId)) {
-                    userId = prompt('🎯 欢迎使用每日毛选！\n\n请输入您的手机号后4位（用于记录您的打卡数据）：', '');
-
+                    userId = prompt('🎯 欢迎使用每日毛选！\n\n第1步：请输入您的手机号后4位：', '');
                     if (userId === null) {
-                        // 用户取消，使用随机ID
                         userId = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
                         break;
                     }
-
                     userId = userId.trim();
-
                     if (userId.length !== 4 || isNaN(userId)) {
                         alert('❌ 请输入4位数字');
                     }
                 }
 
-                localStorage.setItem('maoismUserId', userId);
-                alert(`✅ 已为您创建账号（尾号${userId}），您的打卡记录将被保存！`);
+                // 收集MBTI
+                const mbtiList = ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP',
+                                  'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'];
+                let mbti = '';
+                while (!mbti || !mbtiList.includes(mbti.toUpperCase())) {
+                    mbti = prompt('🧠 第2步：请输入您的MBTI人格类型（如：INTJ）：\n\n不知道？访问 16personalities.com 测试', '');
+                    if (mbti === null) {
+                        mbti = mbtiList[Math.floor(Math.random() * mbtiList.length)];
+                        break;
+                    }
+                    mbti = mbti.trim().toUpperCase();
+                    if (!mbtiList.includes(mbti)) {
+                        alert('❌ 请输入正确的MBTI类型（如：INTJ、ENFP等）');
+                    }
+                }
+
+                // 收集星座
+                const zodiacList = ['白羊座', '金牛座', '双子座', '巨蟹座', '狮子座', '处女座',
+                                    '天秤座', '天蝎座', '射手座', '摩羯座', '水瓶座', '双鱼座'];
+                let zodiac = '';
+                while (!zodiac || !zodiacList.includes(zodiac)) {
+                    zodiac = prompt('⭐ 第3步：请输入您的星座（如：摩羯座）：', '');
+                    if (zodiac === null) {
+                        zodiac = zodiacList[Math.floor(Math.random() * zodiacList.length)];
+                        break;
+                    }
+                    zodiac = zodiac.trim();
+                    if (!zodiacList.includes(zodiac)) {
+                        alert('❌ 请输入正确的星座名称');
+                    }
+                }
+
+                userInfo = {
+                    userId: userId,
+                    mbti: mbti,
+                    zodiac: zodiac
+                };
+
+                localStorage.setItem('maoismUserInfo', JSON.stringify(userInfo));
+                alert(`✅ 账号创建成功！\n\n尾号：${userId}\nMBTI：${mbti}\n星座：${zodiac}`);
+            } else {
+                userInfo = JSON.parse(userInfo);
             }
 
-            return userId;
+            return userInfo;
         }
 
-        // 毛泽东选集经典语录库
         const quotes = [
             "我们的同志在困难的时候，要看到成绩，要看到光明，要提高我们的勇气。",
             "人民，只有人民，才是创造世界历史的动力。世界是人民的，做工的人最有用。",
@@ -735,7 +970,6 @@
             "好好学习，天天向上。我们要不断学习新知识，提高自己的本领。"
         ];
 
-        // 运势文案库
         const fortuneTexts = [
             "今日适合深入调研、理性分析。遇事多观察、多思考，实事求是方能找到正确方向。",
             "今日适合攻坚克难、迎接挑战。困难只是暂时的，坚持不懈必有收获。",
@@ -744,7 +978,6 @@
             "今日学习运旺，适合钻研新知。理论结合实践，会有新的突破和领悟。"
         ];
 
-        // 徽章配置
         const badges = [
             { id: 1, icon: '🌟', name: '初心不忘', workdays: 7 },
             { id: 2, icon: '⭐', name: '坚持不懈', workdays: 14 },
@@ -754,59 +987,176 @@
             { id: 6, icon: '👑', name: '学习标兵', workdays: 50 }
         ];
 
+        // 相处建议数据库
+        const compatibilityData = {
+            // MBTI相处建议
+            mbti: {
+                'INTJ-ENFP': {
+                    score: 90,
+                    strengths: ['思维互补，理性与感性平衡', 'INTJ提供战略，ENFP带来创意', '共同追求成长和深度交流'],
+                    challenges: ['INTJ需要独处，ENFP需要互动', 'INTJ注重计划，ENFP偏好即兴'],
+                    tips: ['给彼此空间，尊重不同的能量需求', '多进行深度对话，分享想法和愿景', 'INTJ可以更开放，ENFP可以更专注'],
+                    quote: '团结一切可以团结的力量。发挥各自优势，理性与激情并重，方能成就大事。'
+                },
+                'INTJ-INTJ': {
+                    score: 75,
+                    strengths: ['思维方式高度一致', '都重视效率和逻辑', '相互理解对独处的需求'],
+                    challenges: ['可能过于理性，缺乏情感表达', '都很固执，难以妥协'],
+                    tips: ['主动表达情感，不要只谈工作', '学会妥协，不是每件事都要争对错', '定期进行深度交流，避免疏远'],
+                    quote: '谦虚使人进步，骄傲使人落后。即使观点相似，也要保持开放心态，互相学习。'
+                },
+                'ENTJ-ENTJ': {
+                    score: 70,
+                    strengths: ['都是天生的领导者', '高效执行力', '目标导向一致'],
+                    challenges: ['权力争夺，都想主导', '竞争可能大于合作'],
+                    tips: ['明确分工，各司其职', '将竞争转化为良性竞争', '学会倾听和妥协'],
+                    quote: '下定决心，不怕牺牲，排除万难，去争取胜利。共同的目标比个人权威更重要。'
+                },
+                'INFJ-INFJ': {
+                    score: 85,
+                    strengths: ['深刻理解彼此的情感', '共同的价值观和理想', '都很有同理心'],
+                    challenges: ['可能过于情绪化', '都倾向于回避冲突'],
+                    tips: ['学会直面问题，不要逃避', '给彼此情感支持的同时也要独立', '保持现实感，不要过于理想化'],
+                    quote: '实事求是，是认识世界、改造世界的根本要求。理想要建立在现实基础上。'
+                },
+                'ENFP-INTJ': {
+                    score: 90,
+                    strengths: ['思维互补，理性与感性平衡', 'INTJ提供战略，ENFP带来创意', '共同追求成长和深度交流'],
+                    challenges: ['INTJ需要独处，ENFP需要互动', 'INTJ注重计划，ENFP偏好即兴'],
+                    tips: ['给彼此空间，尊重不同的能量需求', '多进行深度对话，分享想法和愿景', 'INTJ可以更开放，ENFP可以更专注'],
+                    quote: '团结一切可以团结的力量。发挥各自优势，理性与激情并重，方能成就大事。'
+                },
+                'ISTJ-ESFP': {
+                    score: 60,
+                    strengths: ['互补性强，一个务实一个活泼', 'ISTJ提供稳定，ESFP带来乐趣'],
+                    challenges: ['生活方式差异大', 'ISTJ保守，ESFP冲动'],
+                    tips: ['尊重彼此的生活方式', 'ISTJ可以更灵活，ESFP可以更有计划', '寻找共同兴趣点'],
+                    quote: '世界上怕就怕认真二字。ISTJ的认真和ESFP的热情结合，能创造意想不到的成果。'
+                }
+            },
+            // 星座相处建议
+            zodiac: {
+                '摩羯座-双子座': {
+                    score: 65,
+                    strengths: ['摩羯的稳重和双子的灵活互补', '可以互相学习不同的思维方式'],
+                    challenges: ['价值观差异较大', '摩羯务实，双子爱变化'],
+                    tips: ['摩羯要更开放，双子要更专注', '在工作中合作效果更好'],
+                    quote: '没有调查，就没有发言权。多了解对方的想法，才能更好相处。'
+                },
+                '白羊座-狮子座': {
+                    score: 90,
+                    strengths: ['都充满激情和活力', '相互欣赏彼此的勇气', '火象星座天然契合'],
+                    challenges: ['都很强势，可能产生冲突', '竞争心理强'],
+                    tips: ['学会轮流主导', '将竞争转化为共同目标', '互相激励而非对抗'],
+                    quote: '星星之火，可以燎原。两个充满激情的人，能创造巨大的能量。'
+                },
+                '金牛座-处女座': {
+                    score: 95,
+                    strengths: ['都注重实际和细节', '土象星座天然契合', '价值观一致'],
+                    challenges: ['可能过于保守', '缺乏冒险精神'],
+                    tips: ['偶尔打破常规，尝试新事物', '相互支持，共同成长'],
+                    quote: '实践是检验真理的唯一标准。务实的两人合作，能做出实在的成果。'
+                },
+                '天蝎座-双鱼座': {
+                    score: 92,
+                    strengths: ['水象星座，情感共鸣强', '深刻理解彼此', '都很有直觉'],
+                    challenges: ['可能过于情绪化', '容易陷入负面情绪'],
+                    tips: ['保持理性，不要被情绪主导', '相互支持但也要独立', '多参与积极的活动'],
+                    quote: '我们的同志在困难的时候，要看到成绩，要看到光明。情感深厚的你们，更要保持乐观。'
+                }
+            }
+        };
+
         let currentQuoteIndex = 0;
 
-        // 判断是否为工作日（周一到周五）
         function isWorkday(date) {
             const day = date.getDay();
             return day >= 1 && day <= 5;
         }
 
-        // 获取日期字符串
         function getDateStr(date) {
             return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
         }
 
-        // 关闭窗口
         function closeWindow() {
             window.close();
         }
 
-        // 获取今天的日期字符串
         function getTodayStr() {
             const now = new Date();
             return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
         }
 
-        // 显示日期
         function showDate() {
             const now = new Date();
             const dateStr = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日 星期${['日','一','二','三','四','五','六'][now.getDay()]}`;
             document.getElementById('date').textContent = dateStr;
         }
 
-        // 显示日历
         function showCalendar() {
-            const userId = getUserId();
-            document.getElementById('calendarHeaderTitle').textContent = `📅 打卡日历（尾号${userId}）`;
+            const userInfo = getUserInfo();
+            document.getElementById('calendarHeaderTitle').textContent = `📅 打卡日历（${userInfo.mbti} ${userInfo.zodiac}）`;
             renderCalendar();
             document.getElementById('calendarModal').classList.add('show');
         }
 
-        // 关闭日历
         function closeCalendar() {
             document.getElementById('calendarModal').classList.remove('show');
         }
 
-        // 渲染日历
+        // 编辑个人资料
+        function editProfile() {
+            const userInfo = getUserInfo();
+
+            if (!confirm(`当前资料：\n尾号：${userInfo.userId}\nMBTI：${userInfo.mbti}\n星座：${userInfo.zodiac}\n\n确定要修改资料吗？`)) {
+                return;
+            }
+
+            // 修改MBTI
+            const mbtiList = ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP',
+                              'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'];
+            let newMbti = '';
+            while (!newMbti || !mbtiList.includes(newMbti.toUpperCase())) {
+                newMbti = prompt(`🧠 请输入新的MBTI人格类型（当前：${userInfo.mbti}）：`, userInfo.mbti);
+                if (newMbti === null) return; // 用户取消
+                newMbti = newMbti.trim().toUpperCase();
+                if (!mbtiList.includes(newMbti)) {
+                    alert('❌ 请输入正确的MBTI类型（如：INTJ、ENFP等）');
+                }
+            }
+
+            // 修改星座
+            const zodiacList = ['白羊座', '金牛座', '双子座', '巨蟹座', '狮子座', '处女座',
+                                '天秤座', '天蝎座', '射手座', '摩羯座', '水瓶座', '双鱼座'];
+            let newZodiac = '';
+            while (!newZodiac || !zodiacList.includes(newZodiac)) {
+                newZodiac = prompt(`⭐ 请输入新的星座（当前：${userInfo.zodiac}）：`, userInfo.zodiac);
+                if (newZodiac === null) return; // 用户取消
+                newZodiac = newZodiac.trim();
+                if (!zodiacList.includes(newZodiac)) {
+                    alert('❌ 请输入正确的星座名称');
+                }
+            }
+
+            // 更新用户信息
+            userInfo.mbti = newMbti;
+            userInfo.zodiac = newZodiac;
+            localStorage.setItem('maoismUserInfo', JSON.stringify(userInfo));
+
+            alert(`✅ 资料更新成功！\n\nMBTI：${newMbti}\n星座：${newZodiac}`);
+
+            // 刷新日历显示
+            closeCalendar();
+            showCalendar();
+        }
+
         function renderCalendar() {
-            const userId = getUserId();
-            const storageKey = `dailyMaoism_${userId}`;
+            const userInfo = getUserInfo();
+            const storageKey = `dailyMaoism_${userInfo.userId}`;
             const data = JSON.parse(localStorage.getItem(storageKey)) || { checkInDates: [], favorites: [] };
             const grid = document.getElementById('calendarGrid');
             const today = new Date();
 
-            // 获取最近30天
             const days = [];
             for (let i = 29; i >= 0; i--) {
                 const date = new Date(today);
@@ -814,21 +1164,17 @@
                 days.push(date);
             }
 
-            // 找到第一天是周几
             const firstDay = days[0].getDay();
             const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
 
-            // 渲染星期标题
             grid.innerHTML = weekdays.map(day =>
                 `<div class="calendar-weekday">${day}</div>`
             ).join('');
 
-            // 添加空白占位
             for (let i = 0; i < firstDay; i++) {
                 grid.innerHTML += '<div></div>';
             }
 
-            // 渲染日期
             const todayStr = getDateStr(today);
             days.forEach(date => {
                 const dateStr = getDateStr(date);
@@ -849,14 +1195,10 @@
                 `;
             });
 
-            // 渲染徽章
             renderBadges(data);
-
-            // 渲染统计
             renderStats(data);
         }
 
-        // 渲染徽章
         function renderBadges(data) {
             const workdayCount = data.checkInDates ? data.checkInDates.filter(dateStr => {
                 const [year, month, day] = dateStr.split('-');
@@ -877,7 +1219,6 @@
             }).join('');
         }
 
-        // 渲染统计
         function renderStats(data) {
             const workdayCount = data.checkInDates ? data.checkInDates.filter(dateStr => {
                 const [year, month, day] = dateStr.split('-');
@@ -887,7 +1228,6 @@
 
             const earnedBadges = badges.filter(badge => workdayCount >= badge.workdays).length;
 
-            // 计算连续打卡天数
             let streak = 0;
             if (data.checkInDates && data.checkInDates.length > 0) {
                 const sortedDates = [...data.checkInDates].sort().reverse();
@@ -915,108 +1255,218 @@
             document.getElementById('badgeCount').textContent = earnedBadges;
         }
 
-        // 初始化
+        // 相处模式功能
+        function showCompatibility() {
+            document.getElementById('compatibilityModal').classList.add('show');
+            document.getElementById('compatibilityResult').classList.remove('show');
+        }
+
+        function closeCompatibility() {
+            document.getElementById('compatibilityModal').classList.remove('show');
+        }
+
+        function analyzeCompatibility() {
+            const partnerMbti = document.getElementById('partnerMbti').value;
+            const partnerZodiac = document.getElementById('partnerZodiac').value;
+
+            if (!partnerMbti || !partnerZodiac) {
+                alert('请选择对方的MBTI和星座！');
+                return;
+            }
+
+            const userInfo = getUserInfo();
+            const myMbti = userInfo.mbti;
+            const myZodiac = userInfo.zodiac;
+
+            // 查找相处建议
+            const mbtiKey1 = `${myMbti}-${partnerMbti}`;
+            const mbtiKey2 = `${partnerMbti}-${myMbti}`;
+            const mbtiMatch = compatibilityData.mbti[mbtiKey1] || compatibilityData.mbti[mbtiKey2] || getDefaultMbtiMatch(myMbti, partnerMbti);
+
+            const zodiacKey1 = `${myZodiac}-${partnerZodiac}`;
+            const zodiacKey2 = `${partnerZodiac}-${myZodiac}`;
+            const zodiacMatch = compatibilityData.zodiac[zodiacKey1] || compatibilityData.zodiac[zodiacKey2] || getDefaultZodiacMatch(myZodiac, partnerZodiac);
+
+            // 综合评分
+            const totalScore = Math.round((mbtiMatch.score + zodiacMatch.score) / 2);
+
+            // 生成星级
+            const stars = '★'.repeat(Math.round(totalScore / 20)) + '☆'.repeat(5 - Math.round(totalScore / 20));
+
+            // 渲染结果
+            const resultHtml = `
+                <div class="result-header">
+                    <div class="personality-combo">
+                        你（${myMbti} ${myZodiac}） × 对方（${partnerMbti} ${partnerZodiac}）
+                    </div>
+                    <div class="compatibility-score">${totalScore}分</div>
+                    <div class="score-stars">${stars}</div>
+                </div>
+
+                <div class="result-section">
+                    <div class="result-section-title">🎯 MBTI相处要点</div>
+                    <div class="result-section-content">
+                        <p><strong>优势互补：</strong></p>
+                        <ul>
+                            ${mbtiMatch.strengths.map(s => `<li>${s}</li>`).join('')}
+                        </ul>
+                        <p><strong>潜在挑战：</strong></p>
+                        <ul>
+                            ${mbtiMatch.challenges.map(c => `<li>${c}</li>`).join('')}
+                        </ul>
+                        <p><strong>相处建议：</strong></p>
+                        <ul>
+                            ${mbtiMatch.tips.map(t => `<li>${t}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="result-section">
+                    <div class="result-section-title">⭐ 星座相处指南</div>
+                    <div class="result-section-content">
+                        <p><strong>优势互补：</strong></p>
+                        <ul>
+                            ${zodiacMatch.strengths.map(s => `<li>${s}</li>`).join('')}
+                        </ul>
+                        <p><strong>需要注意：</strong></p>
+                        <ul>
+                            ${zodiacMatch.challenges.map(c => `<li>${c}</li>`).join('')}
+                        </ul>
+                        <p><strong>建议：</strong></p>
+                        <ul>
+                            ${zodiacMatch.tips.map(t => `<li>${t}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="result-section">
+                    <div class="result-section-title">📖 毛选指导</div>
+                    <div class="result-section-content">
+                        <div class="quote-highlight">${mbtiMatch.quote}</div>
+                        <div class="quote-highlight">${zodiacMatch.quote}</div>
+                    </div>
+                </div>
+
+                <div class="result-section">
+                    <div class="result-section-title">💡 今日相处建议</div>
+                    <div class="result-section-content">
+                        <p>${getDailyAdvice(myMbti, partnerMbti, myZodiac, partnerZodiac)}</p>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('compatibilityResult').innerHTML = resultHtml;
+            document.getElementById('compatibilityResult').classList.add('show');
+        }
+
+        // 默认MBTI匹配（当数据库中没有时）
+        function getDefaultMbtiMatch(mbti1, mbti2) {
+            const score = 70 + Math.floor(Math.random() * 20);
+            return {
+                score: score,
+                strengths: ['可以互相学习不同的思维方式', '各有优势，可以互补'],
+                challenges: ['需要时间了解彼此', '沟通方式可能不同'],
+                tips: ['保持开放心态', '多进行深度交流', '尊重彼此的差异'],
+                quote: '团结一切可以团结的力量。理解差异，发挥各自优势，方能共同进步。'
+            };
+        }
+
+        // 默认星座匹配
+        function getDefaultZodiacMatch(zodiac1, zodiac2) {
+            const score = 65 + Math.floor(Math.random() * 25);
+            return {
+                score: score,
+                strengths: ['星座特质可以互补', '各有所长'],
+                challenges: ['需要磨合', '性格差异需要理解'],
+                tips: ['互相包容', '寻找共同兴趣', '保持耐心'],
+                quote: '世界上怕就怕认真二字。认真对待这段关系，用心经营，定能开花结果。'
+            };
+        }
+
+        // 生成今日相处建议
+        function getDailyAdvice(myMbti, partnerMbti, myZodiac, partnerZodiac) {
+            const advices = [
+                `今天适合和${partnerMbti}类型的人一起头脑风暴，你们的思维碰撞会产生创意火花。`,
+                `${myZodiac}和${partnerZodiac}今天的能量场很契合，适合深入交流或合作项目。`,
+                `建议今天主动倾听对方的想法，${partnerMbti}的视角可能会给你新的启发。`,
+                `今天适合一起做务实的工作，发挥各自优势，事半功倍。`,
+                `${myZodiac}的你今天可以更主动一些，${partnerZodiac}会欣赏你的积极态度。`
+            ];
+            return advices[Math.floor(Math.random() * advices.length)];
+        }
+
         function init() {
             console.log('初始化开始...');
 
-            // 获取用户ID
-            const userId = getUserId();
-            console.log('当前用户ID:', userId);
+            const userInfo = getUserInfo();
+            console.log('当前用户信息:', userInfo);
 
             showDate();
 
-            // 读取用户专属数据
-            const storageKey = `dailyMaoism_${userId}`;
+            const storageKey = `dailyMaoism_${userInfo.userId}`;
             let data = localStorage.getItem(storageKey);
-            console.log('localStorage数据:', data);
 
             if (!data) {
                 data = {
-                    userId: userId,
+                    userId: userInfo.userId,
                     lastDate: '',
                     checkInDates: [],
                     favorites: []
                 };
             } else {
                 data = JSON.parse(data);
-                // 兼容旧版本数据
                 if (!data.checkInDates) {
                     data.checkInDates = [];
                 }
             }
 
             const today = getTodayStr();
-            console.log('今天日期:', today);
-
-            // 新的一天
             const todayDate = new Date();
-            if (data.lastDate !== today) {
-                console.log('新的一天');
-                data.lastDate = today;
 
+            if (data.lastDate !== today) {
+                data.lastDate = today;
                 if (isWorkday(todayDate)) {
-                    // 只统计工作日
                     if (!data.checkInDates.includes(today)) {
                         data.checkInDates.push(today);
                     }
                 }
-
                 localStorage.setItem(storageKey, JSON.stringify(data));
             } else {
-                // 同一天，但检查是否需要补充今天的打卡记录（兼容旧版本数据）
                 if (isWorkday(todayDate) && !data.checkInDates.includes(today)) {
-                    console.log('补充今天的打卡记录');
                     data.checkInDates.push(today);
                     localStorage.setItem(storageKey, JSON.stringify(data));
                 }
             }
 
-            // 计算工作日打卡天数
             const workdayCount = data.checkInDates.filter(dateStr => {
                 const [year, month, day] = dateStr.split('-');
                 const date = new Date(year, month - 1, day);
                 return isWorkday(date);
             }).length;
 
-            // 更新打卡天数显示（显示尾号）
-            document.getElementById('checkInDays').textContent = `打卡 ${workdayCount} 天（尾号${userId}）`;
+            document.getElementById('checkInDays').textContent = `打卡 ${workdayCount} 天`;
 
-            console.log('初始化完成，准备抽卡');
-
-            // 自动抽第一张卡
             setTimeout(() => {
-                console.log('执行自动抽卡');
                 playCardAnimation();
             }, 500);
         }
 
-        // 抽卡
         function drawQuote() {
             currentQuoteIndex = Math.floor(Math.random() * quotes.length);
-            console.log('抽到语录索引:', currentQuoteIndex);
             return true;
         }
 
-        // 再抽一次
         function redrawCard() {
-            console.log('点击再抽一次');
-
             drawQuote();
-
             document.getElementById('quoteContent').classList.remove('show');
             document.getElementById('cardArea').style.display = 'flex';
-
             setTimeout(() => {
                 playCardAnimation();
             }, 300);
         }
 
-        // 播放抽卡动画
         function playCardAnimation() {
-            console.log('播放抽卡动画');
-
             drawQuote();
-
             const cardArea = document.getElementById('cardArea');
 
             const glow = document.createElement('div');
@@ -1033,10 +1483,7 @@
             }, 1500);
         }
 
-        // 显示语录内容
         function showQuoteContent() {
-            console.log('显示语录内容');
-
             const quote = quotes[currentQuoteIndex];
             document.getElementById('quote').textContent = quote;
 
@@ -1044,14 +1491,12 @@
             document.getElementById('fortuneText').textContent = fortune;
 
             updateFavoriteIcon();
-
             document.getElementById('quoteContent').classList.add('show');
         }
 
-        // 切换收藏
         function toggleFavorite() {
-            const userId = getUserId();
-            const storageKey = `dailyMaoism_${userId}`;
+            const userInfo = getUserInfo();
+            const storageKey = `dailyMaoism_${userInfo.userId}`;
             let data = JSON.parse(localStorage.getItem(storageKey));
             const index = data.favorites.indexOf(currentQuoteIndex);
 
@@ -1065,27 +1510,25 @@
             updateFavoriteIcon();
         }
 
-        // 更新收藏图标
         function updateFavoriteIcon() {
-            const userId = getUserId();
-            const storageKey = `dailyMaoism_${userId}`;
+            const userInfo = getUserInfo();
+            const storageKey = `dailyMaoism_${userInfo.userId}`;
             const icon = document.getElementById('favoriteIcon');
             const data = JSON.parse(localStorage.getItem(storageKey));
             const isFavorited = data.favorites.includes(currentQuoteIndex);
 
             if (isFavorited) {
                 icon.textContent = '★';
-                icon.className = 'favorite-icon favorited';
+                icon.className = 'action-icon favorite-icon favorited';
             } else {
                 icon.textContent = '☆';
-                icon.className = 'favorite-icon unfavorited';
+                icon.className = 'action-icon favorite-icon unfavorited';
             }
         }
 
-        // 查看收藏
         function viewFavorites() {
-            const userId = getUserId();
-            const storageKey = `dailyMaoism_${userId}`;
+            const userInfo = getUserInfo();
+            const storageKey = `dailyMaoism_${userInfo.userId}`;
             const modal = document.getElementById('favoritesModal');
             const listEl = document.getElementById('favoritesList');
             const data = JSON.parse(localStorage.getItem(storageKey));
@@ -1105,15 +1548,13 @@
             modal.classList.add('show');
         }
 
-        // 关闭收藏列表
         function closeFavorites() {
             document.getElementById('favoritesModal').classList.remove('show');
         }
 
-        // 移除收藏
         function removeFavorite(index) {
-            const userId = getUserId();
-            const storageKey = `dailyMaoism_${userId}`;
+            const userInfo = getUserInfo();
+            const storageKey = `dailyMaoism_${userInfo.userId}`;
             let data = JSON.parse(localStorage.getItem(storageKey));
             const favIndex = data.favorites.indexOf(index);
             if (favIndex > -1) {
@@ -1128,13 +1569,9 @@
             }
         }
 
-        console.log('准备执行window.onload');
         window.onload = function() {
-            console.log('window.onload执行');
             init();
         };
-
-        console.log('脚本加载完成');
     </script>
 </body>
 </html>
